@@ -38,22 +38,19 @@ for v in instrument_names.values():
 
 x=0
 for p in Path(DIR).glob("**/*.mid"):
-    print(str(p))
     try:
         
-        mf = mido.MidiFile(r"C:\PythonPrograms\gset\midi\sliced_midi\Dancing Queen.1\21.mid",clip=True)
+        #mf = mido.MidiFile(r"C:\PythonPrograms\gset\midi\sliced_midi\Dancing Queen.1\21.mid",clip=True)
         # mf = mido.MidiFile(r"C:\PythonPrograms\gset\midi\sliced_midi\September (bonus track).1\20.mid",clip=True)
         # mf = mido.MidiFile(r"C:\PythonPrograms\gset\midi\clean_midi\Earth, Wind & Fire\September (bonus track).1.mid")
-        print(Path(mf.filename).stem)
+        mf = mido.MidiFile(r"C:\PythonPrograms\gset\midi\sliced_midi\September (bonus track).1\3.mid",clip=True)
+    
         print(mf.filename.split(r"\\")[-1])
     except:
         continue
-    with open("out.txt","w") as f:
+    with open("out3.txt","w") as f:
         for track in mf.tracks:
             for message in track:
-                # print(message.type)
-                # if message.type == "control_change":
-                # print(message)
                 f.write(str(message)+"\n")
                 m = str(message).split()
                 if m[0] == "control_change":
