@@ -134,3 +134,4 @@ sliced_midi/
 csv/
 nonmusicals/
 clean_midi/
+whatinstruments.py
