@@ -161,14 +161,21 @@ def classify_inst(inst:int) -> str:
             return j
 
 
-def int_classify_inst(inst):
+def int_classify_inst(inst:str)->int:
     families = ["Piano", "Chromatic Percussion", "Organ", "Guitar", "Bass", 
 "Strings", "Ensemble", "Brass", "Reed", "Pipe", "Synth Lead", "Synth Pad", "Synth Effects", "Ethnic", "Percussive", "Sound Effects"]
-    return families.index(classify_inst(inst))
+    fam = classify_inst(inst)
+    return families.index(fam)
 
 best_in_family = [max(([(inst,count,fam) for inst,count in instrument_weights_usable.items() if classify_inst(inst) == fam]),key=lambda x: x[1])for fam in families]
 #hacky list comprehension that will give the best in each family
 
+fam_weights = {}
+for inst,count in instrument_weights_usable.items():
+    if classify_inst(inst) in fam_weights.keys():
+        fam_weights[classify_inst(inst)] += count
+    else:
+        fam_weights[classify_inst(inst)] = 0
 def give_best_inst(inst:int) -> tuple:
     look_for = classify_inst(inst)
     for idx,x in enumerate(best_in_family):

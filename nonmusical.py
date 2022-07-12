@@ -1,8 +1,9 @@
 from mido import Message, MidiFile, MidiTrack
-from random import randint, gauss, choices,choice,sample
-from  instrument_data import instrument_weights_usable
+from random import randint, gauss,choices
+from  instrument_data import best_in_family,fam_weights,families
 
 def on_off_sequence(length,max_chord):
+    #generates a sequence of random chords, always starting with ons. 
     out = []
     while (len(out) <length):
         chord_len = randint(1,max_chord)
@@ -13,50 +14,46 @@ def on_off_sequence(length,max_chord):
                 out.append(i)
     return out
 
-
-
-
-
-
-
-def generate_nonmusical(path,max_chord=4,num_instruments=3,num_notes=16):
+def generate_nonmusical(path,max_chord=4,num_messages=256):
     mid = MidiFile(type = 1)
 
     track = MidiTrack()
-    instruments = choices(list(instrument_weights_usable.keys()),weights=list(instrument_weights_usable.values()),k=3)
     mid.tracks.append(track)
+    for idx, instrument in (enumerate(best_in_family)):
+        track.append(Message(type="program_change",program=instrument[0],channel=idx))
 
-    for idx,instrument in enumerate(instruments):
-        track.append(Message('program_change', program=instrument, time=0,channel=idx))
-
+    #this is a pretty arbitrary range but is unlikely to matter much. 
     track_vol = randint(100,120)
-    mult_messages = [on_off_sequence(2*num_notes,max_chord) for _ in range(num_instruments)]
-    
-    for i in range(len(instruments)):
-        open_notes = []
-        seq = mult_messages[i]
-        for j in seq:
-            if j == 1:
-                my_note = min(max(int(gauss(64,24)),0),127)
-                note_params = {
-                    "type":"note_on",
-                    "note":(my_note),
-                    "velocity":min(int(gauss(track_vol,5)),127),
-                    "time":int(max(gauss(240,150),0)),
-                    "channel":i
-                    }
-                open_notes.append(my_note)
-                track.append(Message(**note_params))
-            else:
-                off_params ={
-                    "type":"note_off",
-                    "note":(open_notes.pop(0)),
-                    "velocity":0,
-                    "time":20,
-                    "channel":i
-                    }
-                track.append(Message(**off_params))
-
+    message_sequence = on_off_sequence(num_messages,max_chord)
+    #builds 
+    open_notes = []
+    for j in message_sequence:
+        if j == 1:
+            #generates random notes, but we store each note so that we can close notes when they're opened
+            #the usage of the .pop method means that notes that are opened first are also closed first, which isn't perfect but it's a solid appoximation
+            my_channel = choices(list(fam_weights.keys()),weights=list(fam_weights.values()),k=1)[0]
+            my_channel = (families.index(my_channel))
+            #these aren't a simple random selection because, for example, piano, is used a lot more than bird sound FX 4
+            my_note = min(max(int(gauss(64,24)),0),127)
+            note_params = {
+                "type":"note_on",
+                "note":(my_note),
+                "velocity":min(int(gauss(track_vol,5)),127),
+                "time":int(max(gauss(240,150),0)),
+                "channel":my_channel
+                }
+            open_notes.append((my_note,my_channel))
+            track.append(Message(**note_params))
+        else:
+            open_note = open_notes.pop(0)
+            off_params ={
+                "type":"note_off",
+                "note":open_note[0],
+                "velocity":0,
+                "time":20,
+                "channel":open_note[1]
+                }
+            track.append(Message(**off_params))
     mid.save(path)
 
 def generate_n_nonmusicals(path,n,kwargs):
@@ -65,5 +62,5 @@ def generate_n_nonmusicals(path,n,kwargs):
         generate_nonmusical(fr"{path}\nonmusical{i+1}.mid",**kwargs)
 
 if __name__ == "__main__":
-    generate_n_nonmusicals(r"C:\PythonPrograms\gset\midi\nonmusicals",1000,{"max_chord":4,"num_instruments":3,"num_notes":16})
+    generate_n_nonmusicals(r"C:\PythonPrograms\gset\midi\nonmusicals",1000,{"max_chord":4,"num_messages":256})
     
