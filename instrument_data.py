@@ -115,7 +115,7 @@ _instrument_weights={'Bright Acoustic Piano':3608953,'Vibraphone':2794843,'Clavi
 'Agogo':1,
 'Synth Drum':1,
 'Helicopter':1}
-
+#loaded from an analysis of every single midi file in the database of ~20k
 instrument_names = {
     0:'Acoustic Grand Piano', 1:'Bright Acoustic Piano',
 2:'Electric Grand Piano',3:'Honky-tonk Piano',4:'Electric Piano 1',
@@ -141,14 +141,17 @@ instrument_names = {
 112:'Tinkle Bell',113:'Agogo',114:'Steel Drums',115:'Woodblock',116:'Taiko Drum',117:'Melodic Tom',118:'Synth Drum',
 119:'Reverse Cymbal',120:'Guitar Fret Noise',121:'Breath Noise',122:'Seashore',123:'Bird Tweet',124:'Telephone Ring',
 125:'Helicopter',126:'Applause',127:'Gunshot'}
-
+#sourced from the general MIDI 1 specification
+#https://www.midi.org/specifications-old/item/gm-level-1-sound-set
 names_instruments = {v:k for (k,v) in instrument_names.items()}
 
 instrument_weights_usable = {names_instruments[k]:v for k,v in _instrument_weights.items()}
+families = ["Piano", "Chromatic Percussion", "Organ", "Guitar", "Bass", 
+"Strings", "Ensemble", "Brass", "Reed", "Pipe", "Synth Lead", "Synth Pad", "Synth Effects", "Ethnic", "Percussive", "Sound Effects"]
 
 
-
-def classify_inst(inst):
+#will return the family name in a string
+def classify_inst(inst:int) -> str:
     ranges = [list(range((8*i),(8*(i+1)))) for i in range(16)]
     families = ["Piano", "Chromatic Percussion", "Organ", "Guitar", "Bass", 
     "Strings", "Ensemble", "Brass", "Reed", "Pipe", "Synth Lead", "Synth Pad", "Synth Effects", "Ethnic", "Percussive", "Sound Effects"]
@@ -157,20 +160,20 @@ def classify_inst(inst):
         if inst in i:
             return j
 
-families = ["Piano", "Chromatic Percussion", "Organ", "Guitar", "Bass", 
-"Strings", "Ensemble", "Brass", "Reed", "Pipe", "Synth Lead", "Synth Pad", "Synth Effects", "Ethnic", "Percussive", "Sound Effects"]
 
 def int_classify_inst(inst):
     families = ["Piano", "Chromatic Percussion", "Organ", "Guitar", "Bass", 
 "Strings", "Ensemble", "Brass", "Reed", "Pipe", "Synth Lead", "Synth Pad", "Synth Effects", "Ethnic", "Percussive", "Sound Effects"]
     return families.index(classify_inst(inst))
 
-best_in_family=    [max(([(inst,count,fam) for inst,count in instrument_weights_usable.items() if classify_inst(inst) == fam]),key=lambda x: x[1])for fam in families]
+best_in_family = [max(([(inst,count,fam) for inst,count in instrument_weights_usable.items() if classify_inst(inst) == fam]),key=lambda x: x[1])for fam in families]
+#hacky list comprehension that will give the best in each family
 
-def give_best_inst(inst):
+def give_best_inst(inst:int) -> tuple:
     look_for = classify_inst(inst)
     for idx,x in enumerate(best_in_family):
         if x[2] == look_for:
             return (idx,x[0])
+            #returns idx of best instrumnet in a family
 
 
