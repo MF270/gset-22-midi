@@ -48,7 +48,7 @@ for p in Path(DIR).glob("**/*.mid"):
         print(mf.filename.split(r"\\")[-1])
     except:
         continue
-    with open("out3.txt","w") as f:
+    with open("out.txt","w") as f:
         for track in mf.tracks:
             for message in track:
                 f.write(str(message)+"\n")
