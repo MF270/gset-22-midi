@@ -1,4 +1,4 @@
-from mido import MidiFile
+from mido import MidiFile,MidiTrack,Message,MetaMessage
 from pathlib import Path
 import csv
 from processing import process_dir
@@ -34,3 +34,27 @@ def csv_dir(path,output,num_messages):
 def midi_dir_to_csv(midi_path,midi_out,num_messages,csv_out):
     process_dir(midi_path,midi_out,num_messages)
     csv_dir(midi_out,csv_out,num_messages)
+
+def csv_to_midi(path,output):
+    mf = MidiFile()
+    track = MidiTrack()
+    mf.tracks.append(track)
+
+    with open(path,"r",newline="") as csv_data:
+        reader = csv.reader(csv_data,delimiter=",")
+        for line in reader:
+            if len(line) == 1:
+                track.append(MetaMessage(type="set_tempo",tempo=int(line[0])))
+            else:
+                note_params = {
+                    "type":("note_on" if int(line[0]) == 1 else "note_off"),
+                    "note":int(line[2]),
+                    "velocity":int(line[3]),
+                    "time":int(line[4]),
+                    "channel":int(line[1])
+                    }
+                track.append(Message(**note_params))
+    mf.save(rf"{output}\{Path(path).stem}.mid")
+
+if __name__ == "__main__":
+    csv_to_midi(r"C:\PythonPrograms\gset\midi\csv\Dancing Queen.1\21.csv",r"C:\PythonPrograms\gset\midi\csv\Dancing Queen.1")
