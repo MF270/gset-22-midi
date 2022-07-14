@@ -102,7 +102,11 @@ def reduce_tracks(mf:MidiFile):
     mf.tracks.append(final_track)
 
 def process_file(path:str,output:str,num_messages:int):
-    mf = MidiFile(path)
+    try:
+        mf = MidiFile(path,clip=True)
+        #some midi files are super weirdly encoded, so we have to do this to ensure that nothing breaks when we try to open the files
+    except:
+        return
     clean_on_off(mf)
     remove_duplicate_tracks(mf)
     reduce_tracks(mf)
@@ -111,6 +115,7 @@ def process_file(path:str,output:str,num_messages:int):
 def process_dir(dir,output,num_messages):
     for p in Path(dir).glob("**/*.mid"):
         process_file(str(p),output,num_messages)
+        print("processed " + Path(p).stem)
 
 if __name__=="__main__":
     process_file(r"C:\PythonPrograms\gset\midi\clean_midi\Earth, Wind & Fire\September (bonus track).1.mid",r"C:\PythonPrograms\gset\midi\sliced_midi",256)

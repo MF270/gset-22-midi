@@ -4,7 +4,7 @@ import csv
 from processing import process_dir
 
 def midi_to_csv(path,output,num_messages,name=None):
-    mf = MidiFile(path)
+    mf = MidiFile(path,clip=True)
     if name is None:
         name = str(Path(path).parents[0]).split("\\")[-1]
     if not Path(rf"{output}\{name}").exists():
@@ -57,4 +57,4 @@ def csv_to_midi(path,output):
     mf.save(rf"{output}\{Path(path).stem}.mid")
 
 if __name__ == "__main__":
-    csv_to_midi(r"C:\PythonPrograms\gset\midi\csv\Dancing Queen.1\21.csv",r"C:\PythonPrograms\gset\midi\csv\Dancing Queen.1")
+    csv_dir(r"C:\PythonPrograms\gset\midi\sliced_midi",r"C:\PythonPrograms\gset\midi\csv",256)
