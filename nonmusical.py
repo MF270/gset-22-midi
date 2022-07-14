@@ -1,4 +1,4 @@
-from mido import Message, MidiFile, MidiTrack
+from mido import Message, MidiFile, MidiTrack, MetaMessage
 from random import randint, gauss,choices
 from  instrument_data import best_in_family,fam_weights,families
 
@@ -19,6 +19,8 @@ def generate_nonmusical(path,max_chord=4,num_messages=256):
 
     track = MidiTrack()
     mid.tracks.append(track)
+    bpm = int(gauss(500000,20000))
+    track.append(MetaMessage(type="set_tempo",tempo=bpm,time=0))
     for idx, instrument in (enumerate(best_in_family)):
         track.append(Message(type="program_change",program=instrument[0],channel=idx))
 
@@ -62,5 +64,5 @@ def generate_n_nonmusicals(path,n,kwargs):
         generate_nonmusical(fr"{path}\nonmusical{i+1}.mid",**kwargs)
 
 if __name__ == "__main__":
-    generate_n_nonmusicals(r"C:\PythonPrograms\gset\midi\nonmusicals",1000,{"max_chord":4,"num_messages":256})
+    generate_n_nonmusicals(r"C:\PythonPrograms\gset\midi\nonmusicals",20000,{"max_chord":4,"num_messages":256})
     

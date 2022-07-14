@@ -28,7 +28,8 @@ def midi_to_csv(path,output,num_messages,name=None):
 
 
 def csv_dir(path,output,num_messages):
-    for p in Path(path).glob("**/*.mid"):
+    for idx,p in enumerate(Path(path).glob("**/*.mid")):
+        print(f"processed file {idx}")
         midi_to_csv(str(p),output,num_messages)
 
 def midi_dir_to_csv(midi_path,midi_out,num_messages,csv_out):
@@ -57,4 +58,4 @@ def csv_to_midi(path,output):
     mf.save(rf"{output}\{Path(path).stem}.mid")
 
 if __name__ == "__main__":
-    csv_dir(r"C:\PythonPrograms\gset\midi\sliced_midi",r"C:\PythonPrograms\gset\midi\csv",256)
+    csv_dir(r"C:\PythonPrograms\gset\midi\nonmusicals",r"C:\PythonPrograms\gset\midi\csv\nonmusical",256)
