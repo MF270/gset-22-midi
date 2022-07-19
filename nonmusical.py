@@ -7,8 +7,8 @@ def on_off_sequence(length,max_chord):
     out = []
     while (len(out) <length):
         chord_len = randint(1,max_chord)
-        if chord_len + len(out) > length:
-            chord_len = length - len(out)
+        if 2*chord_len + len(out) > length:
+            chord_len = (length - len(out))//2
         for i in range(1,-1,-1):
             for _ in range(chord_len):
                 out.append(i)

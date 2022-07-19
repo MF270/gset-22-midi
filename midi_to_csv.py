@@ -58,4 +58,4 @@ def csv_to_midi(path,output):
     mf.save(rf"{output}\{Path(path).stem}.mid")
 
 if __name__ == "__main__":
-    csv_dir(r"C:\PythonPrograms\gset\midi\nonmusicals",r"C:\PythonPrograms\gset\midi\csv\nonmusical",256)
+    csv_dir(r"C:\PythonPrograms\gset\midi\nonmusicals",r"C:\PythonPrograms\gset\midi\csv",256)
