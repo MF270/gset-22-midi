@@ -63,6 +63,3 @@ def generate_n_nonmusicals(path,n,kwargs):
         print(f"file {i+1} done")
         generate_nonmusical(fr"{path}\nonmusical{i+1}.mid",**kwargs)
 
-if __name__ == "__main__":
-    generate_n_nonmusicals(r"C:\PythonPrograms\gset\midi\nonmusicals",20000,{"max_chord":4,"num_messages":256})
-    

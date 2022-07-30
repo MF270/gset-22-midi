@@ -70,7 +70,6 @@ def clean_on_off(mf:MidiFile):
 
 def reduce_tracks(mf:MidiFile):
     instruments = set()
-    tempofound = False
     final_track = MidiTrack()
     #this uses the most common instrument for each family in the entire dataset which allows us to easily reduce the number of instruments to 16
     #withoug losing *too* much information about the way the song sounds
@@ -82,9 +81,6 @@ def reduce_tracks(mf:MidiFile):
         for message in track:
             if message.type == "program_change":
                 instruments.add((idx,message.channel,message.program))
-            if message.type == "set_tempo" and not(tempofound):
-                final_track.append(message)
-                tempofound = True
     #then we translate to the most popular in their family
     for idx,track in enumerate(mf.tracks):
         for message in track:
@@ -116,6 +112,3 @@ def process_dir(dir,output,num_messages):
     for p in Path(dir).glob("**/*.mid"):
         process_file(str(p),output,num_messages)
         print("processed " + Path(p).stem)
-
-if __name__=="__main__":
-    process_file(r"C:\PythonPrograms\gset\midi\clean_midi\Earth, Wind & Fire\September (bonus track).1.mid",r"C:\PythonPrograms\gset\midi\sliced_midi",256)
